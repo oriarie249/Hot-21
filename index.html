@@ -13,6 +13,7 @@
     <link rel="apple-touch-icon" href="icon.png">
 
     <script>
+      // רישום ה-Service Worker כדי שיעבוד אופליין
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('sw.js')
@@ -57,6 +58,7 @@
             cursor: pointer;
         }
 
+        /* Age Verification Styles */
         #age-gate {
             position: fixed; inset: 0; background: var(--bg); z-index: 50000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -360,34 +362,7 @@
 </div>
 
 <script>
-    // --- מנגנון חסימה מיידי (מעודכן לגישה נוחה בטלפון) ---
-    (function blockUnauthorized() {
-        if (localStorage.getItem('device_registered') === 'true') {
-            return;
-        }
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('authorized') === 'true') {
-            localStorage.setItem('device_registered', 'true');
-            window.history.replaceState({}, document.title, window.location.pathname);
-            return;
-        }
-        
-        // בקשת קוד במידה ואין מפתח בכתובת
-        const pass = prompt("נא להזין קוד גישה:");
-        if (pass === "1234") { 
-            localStorage.setItem('device_registered', 'true');
-        } else {
-            document.documentElement.innerHTML = `
-                <body style="background:#000; color:red; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif; text-align:center; padding:20px;">
-                    <div>
-                        <h1>ACCESS DENIED</h1>
-                        <p style="color:white;">גישה נדחתה. יש להיכנס דרך הקישור הרשמי שקיבלת.</p>
-                    </div>
-                </body>`;
-            throw new Error("Unauthorized access");
-        }
-    })();
-
+    // --- נשאר ללא שינוי כפי שביקשת ---
     window.addEventListener('load', () => {
         if (localStorage.getItem('hot21_age_verified') === 'true') {
             document.getElementById('age-gate').style.display = 'none';
@@ -402,6 +377,7 @@
         }, 500);
     }
 
+    // פונקציית היציאה החדשה
     function leaveApp() {
         window.close();
         document.body.innerHTML = '';
@@ -410,6 +386,7 @@
             location.href = 'about:blank';
         }, 100);
     }
+    // ---------------------------------
 
     const cardBaseURL = "https://deckofcardsapi.com/static/img/";
     const suits = ['H', 'D', 'C', 'S'], vals = ['2','3','4','5','6','7','8','9','0','J','Q','K','A'];
