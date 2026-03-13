@@ -13,6 +13,44 @@
     <link rel="apple-touch-icon" href="icon.png">
 
     <script>
+      // מנגנון אימות הגישה (Verify Access)
+      (async function verifyAccess() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const userKey = urlParams.get('key');
+          const DB_URL = "https://hot-21-default-rtdb.firebaseio.com/keys/";
+
+          if (!userKey) {
+              showError();
+              return;
+          }
+
+          try {
+              const response = await fetch(`${DB_URL}${userKey}.json`);
+              const data = await response.json();
+
+              if (!data || !data.active) {
+                  showError();
+              } else {
+                  console.log("Access Granted! Welcome to Hot 21");
+                  // כאן המשחק ממשיך כרגיל
+              }
+          } catch (e) {
+              showError();
+          }
+      })();
+
+      function showError() {
+          document.body.innerHTML = `
+              <div style="background:#000; color:#333; height:100vh; display:flex; align-items:center; justify-content:center; font-family:sans-serif;">
+                  <div style="text-align:center;">
+                      <h1 style="font-size:5rem; margin:0;">404</h1>
+                      <p>Page Not Found</p>
+                  </div>
+              </div>`;
+          throw new Error("Unauthorized Access");
+      }
+
+      // Service Worker Registration
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('sw.js')
@@ -180,7 +218,7 @@
             width: 85px; height: 120px; 
             background-size: cover; border-radius: 8px; 
             box-shadow: 0 8px 15px rgba(0,0,0,0.5); 
-            margin: 0 -20px; border: 1px solid #000; 
+            margin: -0 -20px; border: 1px solid #000; 
             background-color: #fff; opacity: 0;
             animation: cardFlyIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
